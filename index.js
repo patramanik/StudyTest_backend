@@ -1,30 +1,27 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const dotenv = require('dotenv');
+// const dotenv = require('dotenv');
 const morgan = require('morgan');
 const cors = require("cors");
-const {errorHandler} = require("./src/middlewares");
+const { errorHandler } = require("./src/middlewares");
 const notFound = require("./src/controllers/notFound");
 
-//import routes
-const authRoute=require("./src/routes/auth.js");
+// Import routes
+const authRoute = require("./src/routes/auth.js");
 
-
-
-dotenv.config();
-
+// Load environment variables
+require('dotenv').config();
 
 // Initialize express app
 const app = express();
-const PORT = 3000;
+// Using the port from .env, with a fallback
+const PORT = process.env.PORT || 3000;
 
-// Middleware to parse JSON
-//body parser middleware
+// Middleware for parsing request bodies
+app.use(express.json({ limit: "500mb" }));
+app.use(express.urlencoded({ extended: false, limit: "500mb" }));
 
-app.use(express.json({limit:"500mb"}));
-app.use(bodyParser.json());
+// Security and logging middleware
 app.use(cors());
-app.use(bodyParser.urlencoded({limit:"500mb",extended:false}));
 app.use(morgan("dev"));
 
 // Basic route
@@ -32,13 +29,13 @@ app.get('/', (req, res) => {
     res.send('Hello, Express!');
 });
 
-// // Use routes
+// Use API routes
 app.use("/api/v1/auth", authRoute);
 
 // Handle 404 Not Found
 app.use(notFound);
 
-//error handler middleware
+// Error handling middleware
 app.use(errorHandler);
 
 // Start server

@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
-const { jwtSecret } = require("../config/kyes");
+// const { jwtSecret } = require("../config/kyes");
 const generateToken = (user) => {
+  const jwtSecret = process.env.JWT_SECRET
   const token = jwt.sign(
     {
       _id: user._id,
