@@ -112,7 +112,6 @@ const signin = async (req, res, next) => {
         id: existingUser.id,
         fullName: existingUser.fullName,
         email: existingUser.email,
-        role: existingUser.role,
         isActive: existingUser.isActive,
         lastLogin: existingUser.lastLogin,
         profilePicture: existingUser.profilePicture,

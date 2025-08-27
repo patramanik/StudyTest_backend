@@ -1,7 +1,5 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
+"use strict";
+const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -10,58 +8,71 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // User associations
+      User.hasMany(models.Quiz, {
+        foreignKey: "created_by",
+        as: "createdQuizzes",
+      });
+      User.hasMany(models.Test, {
+        foreignKey: "created_by",
+        as: "createdTests",
+      });
+      User.hasMany(models.TestAttempt, { foreignKey: "user_id" });
+      User.hasMany(models.QuizAttempt, { foreignKey: "user_id" });
     }
   }
-  User.init({
-    fullName: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true
+  User.init(
+    {
+      fullName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+      },
+      email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.ENUM("user", "admin"),
+        defaultValue: "user",
+      },
+      isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+      },
+      lastLogin: {
+        type: DataTypes.DATE,
+        allowNull: true,
+      },
+      profilePicture: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      varificationCode: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      forgotPasswordCode: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      isVarified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
     },
-    email: {
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-      validate: {
-        isEmail: true
-      }
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    role: {
-      type: DataTypes.ENUM('user', 'admin'),
-      defaultValue: 'user'
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
-    },
-    lastLogin: {
-      type: DataTypes.DATE,
-      allowNull: true
-    },
-    profilePicture: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    varificationCode: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    forgotPasswordCode: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    isVarified: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
+    {
+      sequelize,
+      modelName: "User",
     }
-  }, {
-    sequelize,
-    modelName: 'User',
-  });
+  );
   return User;
 };
